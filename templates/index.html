@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
 
-    <title>Sticky Footer Template for Bootstrap</title>
+    <title>Log Console</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet">
@@ -23,11 +23,17 @@
     <!-- Begin page content -->
     <div class="container">
       <div class="page-header">
-        <h1>Sticky footer</h1>
+        <h1>Log Console</h1>
       </div>
       <p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS.</p>
-      <p>Place your logs here <span id="count">{{ count }}</span></p>
-    </div>
+      <p>Latest logs:</p>
+<dl id="log-list"class="dl-horizontal">
+  {% for l in logs %}
+    <dt>{{l['timestamp']}}</dt>
+    <dd>{{l['text']}}</dd>
+  {% end %}
+  </dl>
+</div>
 
     <div id="footer">
       <div class="container">

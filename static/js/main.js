@@ -11,7 +11,9 @@ function requestLogs() {
 
     websocket.onopen = function (evt) { };
     websocket.onmessage = function(evt) {
-        $('#count').html($.parseJSON(evt.data)['count']);
+        var timestap = $.parseJSON(evt.data)['timestamp'];
+        var text = $.parseJSON(evt.data)['text'];
+        $("#log-list").prepend('<dt>'+timestap+'</dt><dd>'+text+'</dd>');
     };
     websocket.onerror = function (evt) { };
 }

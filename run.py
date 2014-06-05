@@ -1,40 +1,36 @@
-import datetime
-import os
-import tornado.escape
-import tornado.httpserver
-import tornado.websocket
-import tornado.ioloop
-import tornado.options
-import tornado.web
+from tornado import web, websocket, httpserver, ioloop
+import os, datetime, json
 import redis
-
-from tornado.options import define, options
-define('port', default=5000, help='run on the given port', type=int)
 
 class Log(object):
     def __init__(self, text):
         super(Log, self).__init__()
-        self.timestamp = datetime.datetime.now().isoformat()
+        utc_datetime = datetime.datetime.utcnow()
+        self.timestamp = utc_datetime.strftime("%Y-%m-%d %H:%M:%S")
         self.text = text
 
-    def __unicode__(self):
-        return '{0},{1}'.format(self.timestamp,self.text)
+    def json(self):
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
 
-class RedisStore(object):
+class RedisLog(object):
     callbacks = []
 
     def __init__(self):
-        super(RedisStore, self).__init__()
+        super(RedisLog, self).__init__()
         redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
         self.redis = redis.from_url(redis_url)
         self.log_db = 'log'
 
-    def add(self, item):
-        self.redis.lpush(self.log_db, str(item))
-        self.notifyCallbacks()
+    def add(self, log):
+        self.redis.lpush(self.log_db, log.json())
+        self.notifyCallbacks(log.json())
 
     def list(self):
-        return self.redis.llen(self.log_db)
+        # read data
+        data = self.redis.lrange(self.log_db, 0, 9)
+        # decode json strings
+        data = [json.loads(e) for e in data]
+        return data
 
     def register(self, callback):
         self.callbacks.append(callback)
@@ -42,14 +38,13 @@ class RedisStore(object):
     def unregister(self, callback):
         self.callbacks.remove(callback)
 
-    def notifyCallbacks(self):
+    def notifyCallbacks(self, log):
         for callback in self.callbacks:
-            callback(self.list())
+            callback(log)
 
 
-class Application(tornado.web.Application):
-    def __init__(self, db):
-        self.db = db
+class Application(web.Application):
+    def __init__(self):
         handlers = [
             (r'/', MainHandler),
             (r'/logs', StatusHandler)
@@ -60,15 +55,19 @@ class Application(tornado.web.Application):
             debug=True,
             autoescape=None
             )
-        tornado.web.Application.__init__(self, handlers, **settings)
+        self.db = RedisLog()
+        web.Application.__init__(self, handlers, **settings)
 
+    def update(self):
+        l = Log('update done')
+        self.db.add(l)
 
-class MainHandler(tornado.web.RequestHandler):
+class MainHandler(web.RequestHandler):
     def get(self):
-        count = self.application.db.list()
-        self.render("index.html", count=count)
+        logs = self.application.db.list()
+        self.render("index.html", logs=logs)
 
-class StatusHandler(tornado.websocket.WebSocketHandler):
+class StatusHandler(websocket.WebSocketHandler):
     def open(self):
         self.application.db.register(self.callback)
 
@@ -78,23 +77,20 @@ class StatusHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         pass
 
-    def callback(self, count):
-        self.write_message('{"count":"%d"}' % count)
+    def callback(self, log):
+        self.write_message(log)
 
+def main():
+    app = Application()
+    server = httpserver.HTTPServer(app)
+    server.listen(os.getenv("PORT", 5000))
+    server_loop = ioloop.IOLoop.instance()
 
-def update():
-    l = Log('new')
-    db.add(l)
+    # background update every 15 seconds
+    task = ioloop.PeriodicCallback(app.update,15*1000)
+    task.start()
 
-db = RedisStore()
+    server_loop.start()
 
-tornado.options.parse_command_line()
-http_server = tornado.httpserver.HTTPServer(Application(db))
-http_server.listen(os.getenv("PORT", 5000))
-ioloop = tornado.ioloop.IOLoop.instance()
-
-# background update every 15 seconds
-task = tornado.ioloop.PeriodicCallback(update,15*1000)
-task.start()
-
-ioloop.start()
+if __name__ == '__main__':
+    main()
