@@ -89,8 +89,8 @@ def main():
     server.listen(os.getenv("PORT", 5000))
     server_loop = ioloop.IOLoop.instance()
 
-    # background update every 15 seconds
-    task = ioloop.PeriodicCallback(app.update,15*1000)
+    # background update every 15 min
+    task = ioloop.PeriodicCallback(app.update,15*60*1000)
     task.start()
 
     server_loop.start()
