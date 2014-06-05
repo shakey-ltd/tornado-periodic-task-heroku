@@ -34,4 +34,4 @@ You can run it locally now (remember to run Redis first):
 
 #### 3. Keep heroku alive
 
-You can try NewRelict Heroku addon or http://uptimerobot.com
+You can try NewRelic Heroku addon or http://uptimerobot.com
