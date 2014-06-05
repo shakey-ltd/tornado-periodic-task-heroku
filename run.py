@@ -58,9 +58,12 @@ class Application(web.Application):
         self.db = RedisLog()
         web.Application.__init__(self, handlers, **settings)
 
+    def to_do(self):
+        return 'done'
+
     def update(self):
-        l = Log('update done')
-        self.db.add(l)
+        result = self.to_do()
+        self.db.add(Log(result))
 
 class MainHandler(web.RequestHandler):
     def get(self):

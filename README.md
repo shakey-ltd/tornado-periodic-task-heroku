@@ -1,11 +1,11 @@
 # Periodically perform tasks with Tornado
 
-#### Uses Redis for log
+#### Simple Tornado server running periodic task with Redis log and websocket console
 
 
 ## Setup
 
-#### 1. Heroku
+#### 1. Project
 
 ```
     $ heroku create
@@ -14,6 +14,16 @@
     $ heroku labs:enable websockets
 ```
 
-#### 2. Use UptimeRobot to keep dynos alive
+#### 1. Heroku
+
+```
+    $ heroku create
+    $ heroku addons:add redistogo
+    $ heroku labs:enable websockets
+    $ git push heroku master
+    $ heroku ps:scale web=1
+```
+
+#### 2. Use UptimeRobot to keep dyno alive
 
 uptimerobot.com
