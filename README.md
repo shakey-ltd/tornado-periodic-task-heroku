@@ -1,20 +1,28 @@
-# Periodically perform tasks with Tornado
+# Periodic tasks with Tornado and Redis. Heroku ready
 
 #### Simple Tornado server running periodic task with Redis log and websocket console
 
+Note: It's for educational purposes only. Not suitable for production.
 
 ## Setup
 
-#### 1. Project
+#### 1. Env
 
 ```
-    $ heroku create
-    $ heroku addons:add redistogo
-    $ heroku ps:scale web=1
-    $ heroku labs:enable websockets
+    $ git clone https://github.com/shakey-uk/tornado-periodic-task-heroku.git
+    $ cd tornado-periodic-task-heroku
+    $ virutalenv venv
+    $ source venv/bin/activate
+    $ pip install -r requirements.txt
 ```
 
-#### 1. Heroku
+You can run it locally now (remember to run Redis first):
+
+```
+    $ python run.py
+```
+
+#### 2. Heroku
 
 ```
     $ heroku create
@@ -24,6 +32,6 @@
     $ heroku ps:scale web=1
 ```
 
-#### 2. Use UptimeRobot to keep dyno alive
+#### 3. Keep heroku alive
 
-uptimerobot.com
+You can try NewRelict Heroku addon or http://uptimerobot.com
