@@ -1,5 +1,5 @@
 import datetime
-import os.path
+import os
 import tornado.escape
 import tornado.httpserver
 import tornado.websocket
@@ -90,7 +90,7 @@ db = RedisStore()
 
 tornado.options.parse_command_line()
 http_server = tornado.httpserver.HTTPServer(Application(db))
-http_server.listen(options.port)
+http_server.listen(os.getenv("PORT", 5000))
 ioloop = tornado.ioloop.IOLoop.instance()
 
 # background update every 15 seconds
