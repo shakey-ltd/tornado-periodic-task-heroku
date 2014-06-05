@@ -12,5 +12,6 @@
     $ heroku addons:add redistogo
     $ heroku addons:add newrelic
     $ heroku ps:scale web=1
+    $ heroku labs:enable websockets
 ```
 

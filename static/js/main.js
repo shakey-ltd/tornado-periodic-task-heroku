@@ -3,7 +3,7 @@ $(document).ready(function() {
 });
 
 function requestLogs() {
-    var host = 'wss://' + location.host + '/logs'
+    var host = 'ws://' + location.host + '/logs'
 
     ws = new WebSocket(host);
 
