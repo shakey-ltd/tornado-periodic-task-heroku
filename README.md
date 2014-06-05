@@ -35,3 +35,9 @@ You can run it locally now (remember to run Redis first):
 #### 3. Keep heroku alive
 
 You can try NewRelic Heroku addon or http://uptimerobot.com
+
+```
+    $ heroku addons:add newrelic
+    $ echo web: newrelic-admin run-program python run.py > Procfile
+    $ heroku config:set NEW_RELIC_APP_NAME='tornado-task'
+```
