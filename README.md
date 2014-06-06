@@ -16,7 +16,7 @@ Note: It's for educational purposes only. Not suitable for production.
     $ pip install -r requirements.txt
 ```
 
-You can run it locally now (remember to run Redis first):
+You can run it locally now (don't forget to start redis-server first):
 
 ```
     $ python run.py
@@ -34,10 +34,15 @@ You can run it locally now (remember to run Redis first):
 
 #### 3. Keep heroku alive
 
-You can try NewRelic Heroku addon or http://uptimerobot.com
+You can try NewRelic Heroku addon or http://uptimerobot.com. Here's instructions for NewRelic:
 
 ```
     $ heroku addons:add newrelic
     $ echo web: newrelic-admin run-program python run.py > Procfile
-    $ heroku config:set NEW_RELIC_APP_NAME='tornado-task'
+    $ heroku config:set NEW_RELIC_APP_NAME='tornado-tasks'
 ```
+
+Click the Settings tab, then click Availability Monitoring. In the URL To Ping text box add your app's url and click start pinging.
+
+Done and done. :)
+
