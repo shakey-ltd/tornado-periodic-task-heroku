@@ -40,6 +40,7 @@ You can try NewRelic Heroku addon or http://uptimerobot.com. Here's instructions
     $ heroku addons:add newrelic
     $ echo web: newrelic-admin run-program python run.py > Procfile
     $ heroku config:set NEW_RELIC_APP_NAME='tornado-tasks'
+    $ heroku addons:open newrelic
 ```
 
 Click the Settings tab, then click Availability Monitoring. In the URL To Ping text box add your app's url and click start pinging.
